@@ -14,7 +14,6 @@ The project incorporates a variety of sorting algorithms:
 * Heap Sort
 * Radix Sort
 * Counting Sort
-* Bogo Sort
  
  Each algorithm is visualized in a unique, real-time animation.
 
