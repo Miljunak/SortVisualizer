@@ -4,9 +4,9 @@ SortVisualizer is a graphical program for visualizing sorting algorithms written
 ## Features
 The project incorporates a variety of sorting algorithms:
 
- -Bubble Sort
- -Selection Sort
- -Insertion Sort
+*Bubble Sort
+*Selection Sort
+*Insertion Sort
  -Quick Sort
  -Merge Sort
  -Shell Sort
