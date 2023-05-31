@@ -22,10 +22,14 @@ public:
     // Destructor
     ~SortHandler();
 
+    // Main function
+    void sorting();
+
 private:
     // Variables
     std::string sortType_;
     int sleepInterval_;
+    int high_;
     std::vector<int> array_;
     std::vector<float> positions_;
     std::vector<sf::RectangleShape> redRects_;
@@ -44,6 +48,7 @@ private:
     void heapSort(std::vector<int>& arr);
     void radixSort(std::vector<int>& arr);
     void countingSort(std::vector<int>& arr);
+    void bogoSort(std::vector<int>& arr);
 
     // Helper functions
     void sortSwap(int x, int y);

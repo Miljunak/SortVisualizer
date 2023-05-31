@@ -2,29 +2,41 @@
 
 
 SortHandler::SortHandler(std::string sortType, int high, int sleepInterval) :
-        sortType_{std::move(sortType)}, sleepInterval_{sleepInterval}
+        sortType_{std::move(sortType)}, high_(high), sleepInterval_{sleepInterval}
+{}
+
+// MAIN CODE
+
+void SortHandler::sorting()
 {
+    if (high_ == 21474 && sleepInterval_ == 83647)
+    {
+        sortType_ = "???";
+        high_ = 8;
+        sleepInterval_ = 1000;
+    }
 
     // Create array, positions and height unit to work on while sort_swap() happens
-    float heightUnit = MAX_COLUMN_HEIGHT / static_cast<float>(high);
-    float widthUnit = MAX_COLUMN_WIDTH / static_cast<float>(high);
+    float heightUnit = MAX_COLUMN_HEIGHT / static_cast<float>(high_);
+    float widthUnit = MAX_COLUMN_WIDTH / static_cast<float>(high_);
 
-    for (int i = 0; i < high; i++)
+    for (int i = 0; i < high_; i++)
         array_.push_back(i + 1);
 
     std::shuffle(array_.begin(),
                  array_.end(),
-                 std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count()));
+                 std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count())
+                 );
 
-    for (int i = 0; i < high; i++)
+    for (int i = 0; i < high_; i++)
         positions_.push_back(static_cast<float>(array_[i] - 1) * widthUnit);
 
-    // Create SFML window
     sf::RenderWindow window(
             sf::VideoMode(MAX_COLUMN_WIDTH,MAX_COLUMN_HEIGHT),
-            sortType_);
+            sortType_
+            );
 
-    for (int i = 0; i < high; i++)
+    for (int i = 0; i < high_; i++)
     {
         float pos = positions_[i];
         sf::RectangleShape rect(sf::Vector2f(widthUnit, -heightUnit * static_cast<float>(i + 1)));
@@ -43,11 +55,11 @@ SortHandler::SortHandler(std::string sortType, int high, int sleepInterval) :
         sortingThread_ = std::thread(&SortHandler::insertionSort, this, std::ref(array_));
     }
     else if (sortType_ == "QUICKSORT") {
-        sortingThread_ = std::thread(&SortHandler::quickSort, this, std::ref(array_), 0, high - 1);
+        sortingThread_ = std::thread(&SortHandler::quickSort, this, std::ref(array_), 0, high_ - 1);
         fast_ = true;
     }
     else if (sortType_ == "MERGESORT") {
-        sortingThread_ = std::thread(&SortHandler::mergeSort, this, std::ref(array_), 0, high - 1);
+        sortingThread_ = std::thread(&SortHandler::mergeSort, this, std::ref(array_), 0, high_ - 1);
     }
     else if (sortType_ == "SHELLSORT") {
         sortingThread_ = std::thread(&SortHandler::shellSort, this, std::ref(array_));
@@ -65,15 +77,17 @@ SortHandler::SortHandler(std::string sortType, int high, int sleepInterval) :
         sortingThread_ = std::thread(&SortHandler::radixSort, this, std::ref(array_));
         fast_ = true;
     }
-    else {
+    else if (sortType_ == "COUNTINGSORT") {
         sortingThread_ = std::thread(&SortHandler::countingSort, this, std::ref(array_));
+    }
+    else {
+        sortingThread_ = std::thread(&SortHandler::bogoSort, this, std::ref(array_));
     }
 
 
     // Main loop
     while (window.isOpen())
     {
-        // Handle events
         sf::Event event{};
         while (window.pollEvent(event))
         {
@@ -87,7 +101,6 @@ SortHandler::SortHandler(std::string sortType, int high, int sleepInterval) :
             }
         }
 
-        // Clear the window
         window.clear();
 
         for (int i = 0; i < array_.size(); i++)
@@ -135,6 +148,8 @@ void SortHandler::sortMove(int index, float newPos)
     }
     std::this_thread::sleep_for(std::chrono::microseconds(sleepInterval_));
 }
+
+// SORTS
 
 void SortHandler::bubbleSort(std::vector<int> &arr)
 {
@@ -270,7 +285,8 @@ void SortHandler::shellSort(std::vector<int>& arr)
     }
 }
 
-void SortHandler::combSort(std::vector<int>& arr) {
+void SortHandler::combSort(std::vector<int>& arr)
+{
     int n = static_cast<int>(arr.size());
     int gap = n;
     bool swapped = true;
@@ -281,8 +297,10 @@ void SortHandler::combSort(std::vector<int>& arr) {
             gap = 1;
 
         swapped = false;
-        for (int i = 0; i < n - gap; i++) {
-            if (arr[i] > arr[i + gap]) {
+        for (int i = 0; i < n - gap; i++)
+        {
+            if (arr[i] > arr[i + gap])
+            {
                 sortSwap(i, i + gap);
                 swapped = true;
 
@@ -301,14 +319,10 @@ void SortHandler::heapify(std::vector<int>& arr, int n, int i)
     int right = 2 * i + 2;
 
     if (left < n && arr[left] > arr[largest])
-    {
         largest = left;
-    }
 
     if (right < n && arr[right] > arr[largest])
-    {
         largest = right;
-    }
 
     if (largest != i)
     {
@@ -356,17 +370,11 @@ void SortHandler::countingSort(std::vector<int>& arr)
 
     std::vector<int> count(range), output(n), sorted_positions(n);
 
-    // Count the occurrences of each element
     for (int i = 0; i < n; i++)
-    {
         count[arr[i] - minElement]++;
-    }
 
-    // Generate the cumulative count
     for (int i = 1; i < range; i++)
-    {
         count[i] += count[i - 1];
-    }
 
     // Create the output array and update positions
     for (int i = n - 1; i >= 0; i--)
@@ -377,7 +385,6 @@ void SortHandler::countingSort(std::vector<int>& arr)
         count[arr[i] - minElement]--;
     }
 
-    // Update redRects' positions to match the sorted elements
     for (int i = 0; i < n; i++)
     {
         sortMove(i, static_cast<float>(sorted_positions[i]));
@@ -389,9 +396,7 @@ void SortHandler::countingSort(std::vector<int>& arr)
 
     // Copy the output array to the original array
     for (int i = 0; i < n; i++)
-    {
         arr[i] = output[i];
-    }
 }
 
 
@@ -404,16 +409,19 @@ void SortHandler::merge(std::vector<int>& arr, int start, int mid, int end)
     int start2 = mid + 1;
 
     // If the direct merge is already sorted
-    if (arr[mid] <= arr[start2]) {
+    if (arr[mid] <= arr[start2])
         return;
-    }
 
     // Two pointers to maintain start of both vectors to merge
-    while (start <= mid && start2 <= end) {
+    while (start <= mid && start2 <= end)
+    {
         // If element 1 is in the right place
-        if (arr[start] <= arr[start2]) {
+        if (arr[start] <= arr[start2])
+        {
             start++;
-        } else {
+        }
+        else
+        {
             // Swap element 2 with all elements to the right of element 1
             for (int i = start2; i > start; i--)
                 sortSwap(i, i-1);
@@ -445,18 +453,15 @@ void SortHandler::radixSortPass(std::vector<int>& arr, int exp)
     std::vector<int> count(10, 0);
     std::vector<float> sorted_positions(n);
 
-    // Count the occurrences of each digit
     for (int i = 0; i < n; i++)
     {
         int digit = (arr[i] / exp) % 10;
         count[digit]++;
     }
 
-    // Generate the cumulative count
     for (int i = 1; i < 10; i++)
         count[i] += count[i - 1];
 
-    // Create the output array and update positions
     for (int i = n - 1; i >= 0; i--)
     {
         int digit = (arr[i] / exp) % 10;
@@ -466,7 +471,6 @@ void SortHandler::radixSortPass(std::vector<int>& arr, int exp)
         count[digit]--;
     }
 
-    // Copy the output array to the original array and update redRects' positions
     for (int i = 0; i < n; i++)
     {
         arr[i] = output[i];
@@ -492,6 +496,27 @@ void SortHandler::radixSort(std::vector<int>& arr)
     }
 }
 
+void SortHandler::bogoSort(std::vector<int>& arr)
+{
+    std::default_random_engine generator(std::chrono::system_clock::now().time_since_epoch().count());
+
+    while (!std::is_sorted(arr.begin(), arr.end()))
+    {
+        for (int i = 0; i < arr.size() - 1; i++)
+        {
+            // Generate a random index
+            std::uniform_int_distribution<int> distribution(i, static_cast<int>(arr.size() - 1));
+            int randomIndex = distribution(generator);
+            sortSwap(i, randomIndex);
+
+            // Check the flag to see if the window is still open
+            if (!windowOpen_)
+                return;
+        }
+    }
+}
+
+// DESTRUCTOR
 
 SortHandler::~SortHandler()
 {

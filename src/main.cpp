@@ -95,8 +95,8 @@ int main()
     textHigher.setCharacterSize(24);
     textHigher.setFillColor(sf::Color::Black);
 
-    sf::Text textHigherInfo("Size n                                                                                "
-                            "Time [us]", font, 24);
+    sf::Text textHigherInfo("Size n                                                                           "
+                            "Sleep interval [us]", font, 24);
     textHigherInfo.setFillColor(sf::Color::Black);
     textHigherInfo.setPosition(175, 100);
 
@@ -165,6 +165,7 @@ int main()
 
                             std::cout << algorithms[i] << std::endl;
                             SortHandler newSortHandler(algorithms[i], valueHigher, valueSleep);
+                            newSortHandler.sorting();
                         }
                     }
                     activeHigher = (inputBoxHigher.getGlobalBounds().contains(sf::Vector2f(
