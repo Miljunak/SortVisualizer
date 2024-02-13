@@ -1,3 +1,0 @@
-C:/Users/milek/CLionProjects/SortVisualizer/cmake-build-debug/CMakeFiles/SortVisualizer.dir
-C:/Users/milek/CLionProjects/SortVisualizer/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/milek/CLionProjects/SortVisualizer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
