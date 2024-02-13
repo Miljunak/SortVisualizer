@@ -9,6 +9,7 @@ SortHandler::SortHandler(std::string sortType, int high, int sleepInterval) :
 
 void SortHandler::sorting()
 {
+    // Bogo Sort Easter Egg
     if (high_ == 21474 && sleepInterval_ == 83647)
     {
         sortType_ = "???";

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
 
 #define MAX_COLUMN_HEIGHT 600.f
 #define MAX_COLUMN_WIDTH 1800.f

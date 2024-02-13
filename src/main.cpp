@@ -6,12 +6,16 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1000, 500),
                             "Sorting settings", sf::Style::Titlebar | sf::Style::Close);
 
+    // Get the path to the directory containing the executable
+    std::filesystem::path executablePath = std::filesystem::absolute(std::filesystem::path(__FILE__)).parent_path();
+    std::filesystem::path fontPath = executablePath / "arial.ttf";
+
     sf::Font font;
-    if (!font.loadFromFile("C:/Users/milek/OneDrive/Pulpit/frontfun/c_cpp/cpp_4_sem/SortVisualizer/arial.ttf"))
-    {
+    if (!font.loadFromFile(fontPath.string())) {
         std::cout << "Error loading font!" << std::endl;
         return 1;
     }
+
 
     // Create buttons for each sorting algorithm
     std::vector<sf::RectangleShape> buttons(10);
@@ -95,8 +99,11 @@ int main()
     textHigher.setCharacterSize(24);
     textHigher.setFillColor(sf::Color::Black);
 
-    sf::Text textHigherInfo("Size n                                                                           "
-                            "Sleep interval [us]", font, 24);
+    std::string microString = "Size n                                                                               "
+                              "Sleep interval\n"
+                              "                                                                                         [micro-seconds]";
+
+    sf::Text textHigherInfo(microString, font, 24);
     textHigherInfo.setFillColor(sf::Color::Black);
     textHigherInfo.setPosition(175, 100);
 
@@ -156,7 +163,7 @@ int main()
                         if (buttons[i].getGlobalBounds().contains(sf::Vector2f(
                                 static_cast<float>(event.mouseButton.x),
                                 static_cast<float>(event.mouseButton.y)
-                                )))
+                        )))
                         {
                             const sf::String& higher = textHigher.getString();
                             const sf::String& sleep = textSleep.getString();
@@ -171,11 +178,11 @@ int main()
                     activeHigher = (inputBoxHigher.getGlobalBounds().contains(sf::Vector2f(
                             static_cast<float>(event.mouseButton.x),
                             static_cast<float>(event.mouseButton.y)
-                            )));
+                    )));
                     activeSleep = (inputBoxSleep.getGlobalBounds().contains(sf::Vector2f(
                             static_cast<float>(event.mouseButton.x),
                             static_cast<float>(event.mouseButton.y)
-                            )));
+                    )));
                     break;
                 }
                 case sf::Event::Closed:
